@@ -2,7 +2,9 @@
 
 > MCP-compatible tool registry for authenticated tool discovery and execution.
 
-[Demo](#) | [Architecture](docs/architecture.md) | [API Docs](docs/api.md) | [Evaluation](docs/evaluation.md)
+![Demo](demo.gif)
+
+[Demo](demo.gif) | [Architecture](docs/architecture.md) | [API Docs](docs/api.md) | [Evaluation](docs/evaluation.md)
 
 ## What it does
 Provides a centralized, highly concurrent registry for Model Context Protocol (MCP) tools. It acts as an execution gateway, mapping autonomous agent requests to sandboxed tool executions while enforcing strict JWT-based role permissions.
