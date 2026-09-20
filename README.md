@@ -1,5 +1,7 @@
 # Agentic Tool Ecosystem (MCP)
 
+![Terminal Demo](demo.gif)
+
 A custom implementation of the Model Context Protocol (MCP) to standardize how agents discover and execute tools securely.
 
 ## Tech Stack
@@ -28,6 +30,8 @@ This project is deployed as a serverless backend on Vercel. You can test the API
 
 ```bash
 # Example Request
+
+![Terminal Demo](demo.gif)
 curl -X GET https://mcp-tool-ecosystem-41pbvvrsu-dev4aibots.vercel.app/api/health
 ```
 
