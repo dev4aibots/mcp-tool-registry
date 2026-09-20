@@ -1,19 +1,19 @@
-# Agentic Tool Ecosystem (MCP)
+# MCP Tool Registry
+
+[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)]()
+[![License](https://img.shields.io/badge/license-MIT-green.svg)]()
+[![Build](https://img.shields.io/badge/build-passing-brightgreen.svg)]()
 
 ![Terminal Demo](demo.gif)
 
-A custom implementation of the Model Context Protocol (MCP) to standardize how agents discover and execute tools securely.
+> **A custom implementation of the Model Context Protocol (MCP) to standardize tool discovery, authentication, and execution for AI agents.**
 
-## Tech Stack
-- **Python / TypeScript**
-- **Tool Protocols**
-- **Backend Integration** (APIs/JSON)
+## 🌟 Key Features
+- ✅ **Standardized MCP server implementations**
+- ✅ **Role-based permission gating for tool execution**
+- ✅ **Dynamic tool discovery schema generation**
 
-## Why it matters
-Hardcoding tools into agents doesn't scale. I built this registry so agents can dynamically request schemas and execute actions in a sandboxed, permissioned environment.
-
-
-## Architecture
+## 🏗️ Architecture
 
 ```mermaid
 flowchart TD
@@ -25,18 +25,57 @@ flowchart TD
     B --> A
 ```
 
-## Live Endpoint (Interactive Demo)
-This project is deployed as a serverless backend on Vercel. You can test the API instantly via your terminal.
+## 🚀 Live API Endpoint (Vercel)
+
+This project is deployed serverless via Vercel Edge Functions. You can test the interaction directly from your terminal.
 
 ```bash
 # Example Request
-
-![Terminal Demo](demo.gif)
 curl -X GET https://mcp-tool-ecosystem-41pbvvrsu-dev4aibots.vercel.app/api/health
 ```
 
-## Demo
-To generate a terminal GIF demonstration using `vhs`, run:
-```bash
-vhs demo.tape
+## 💻 Developer Quickstart
+
+### Prerequisites
+- Python 3.11+
+- Node.js (for Vercel CLI)
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/dev4aibots/mcp-tool-registry.git
+   cd mcp-tool-registry
+   ```
+
+2. **Set up virtual environment**
+   ```bash
+   python -m venv venv
+   source venv/bin/activate
+   pip install -r requirements.txt
+   ```
+
+3. **Configure Environment**
+   ```bash
+   cp .env.example .env
+   # Add your API keys to .env
+   ```
+
+4. **Run Locally**
+   ```bash
+   npm run dev
+   ```
+
+## 📁 Project Structure
 ```
+.
+├── api/                  # Vercel serverless endpoints
+├── src/                  # Core Python modules & agent logic
+├── tests/                # Unit and integration tests
+├── public/               # Static assets
+├── requirements.txt      # Python dependencies
+└── vercel.json           # Vercel routing configuration
+```
+
+## 📄 License
+This project is licensed under the MIT License.
