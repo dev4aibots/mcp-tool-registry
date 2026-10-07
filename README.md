@@ -1,5 +1,9 @@
 # MCP Tool Registry
 
+> 🧪 **Learning build** — a course/tutorial project for studying Model Context Protocol tool registries. Not a production system.
+
+> **Status:** Reference / learning code. The scaffold runs locally for experimentation; it is not deployed, has no production users, and has not been hardened for production use.
+
 > MCP-compatible tool registry for authenticated tool discovery and execution.
 
 ![Demo](demo.gif)
