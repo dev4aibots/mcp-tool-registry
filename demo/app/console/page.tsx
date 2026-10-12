@@ -172,6 +172,17 @@ export default function ConsolePage() {
                     </Select.Option>
                   ))}
                 </Select>
+                {/* Native selects don't fire onChange when re-selecting the
+                    already-active option — this refills the editor from the
+                    current preset explicitly. */}
+                <Button
+                  variant="invisible"
+                  size="small"
+                  onClick={() => applyPreset(presetIdx)}
+                  className="mt-1"
+                >
+                  Reset editor to preset
+                </Button>
               </FormControl>
             </div>
 

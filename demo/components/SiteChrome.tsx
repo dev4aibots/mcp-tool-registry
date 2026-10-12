@@ -1,6 +1,7 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import NextLink from 'next/link';
 import {
   Header,
   Breadcrumbs,
@@ -34,6 +35,14 @@ function isActive(pathname: string, href: string): boolean {
 
 export function SiteChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const submitSearch = (value: string) => {
+    const q = value.trim();
+    // SPA navigation: preserves the module-level session store (ack state),
+    // unlike window.location.assign which resets it via a full reload.
+    router.push(`/incidents${q ? `?q=${encodeURIComponent(q)}` : ''}`);
+  };
 
   return (
     <div className="col" style={{ minHeight: '100vh', gap: 0 }}>
@@ -54,8 +63,7 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
             leadingVisual={SearchIcon}
             onKeyDown={(event) => {
               if (event.key === 'Enter') {
-                const value = (event.target as HTMLInputElement).value.trim();
-                window.location.assign(`/incidents${value ? `?q=${encodeURIComponent(value)}` : ''}`);
+                submitSearch((event.target as HTMLInputElement).value);
               }
             }}
           />
@@ -81,16 +89,41 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
         <Stack direction="horizontal" justify="space-between" align="center" wrap="wrap" gap="normal">
           <Breadcrumbs>
             <Breadcrumbs.Item href="https://github.com/dev4aibots">dev4aibots</Breadcrumbs.Item>
-            <Breadcrumbs.Item href="/tools" selected>
+            <Breadcrumbs.Item as={NextLink} href="/tools" selected>
               mcp-tool-registry-demo
             </Breadcrumbs.Item>
           </Breadcrumbs>
           <Stack direction="horizontal" align="center" gap="normal">
             <BranchName href="https://github.com/dev4aibots/mcp-tool-registry">main</BranchName>
             <ButtonGroup>
-              <Button size="small">Watch</Button>
-              <Button size="small">Fork</Button>
-              <Button size="small">
+              <Button
+                size="small"
+                as="a"
+                href="https://github.com/dev4aibots/mcp-tool-registry"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Watch dev4aibots/mcp-tool-registry on GitHub (opens in a new tab)"
+              >
+                Watch
+              </Button>
+              <Button
+                size="small"
+                as="a"
+                href="https://github.com/dev4aibots/mcp-tool-registry/fork"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Fork dev4aibots/mcp-tool-registry on GitHub (opens in a new tab)"
+              >
+                Fork
+              </Button>
+              <Button
+                size="small"
+                as="a"
+                href="https://github.com/dev4aibots/mcp-tool-registry"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Star dev4aibots/mcp-tool-registry on GitHub (opens in a new tab)"
+              >
                 Star <CounterLabel className="ml-1">1</CounterLabel>
               </Button>
             </ButtonGroup>
@@ -101,6 +134,7 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
           {TABS.map((tab) => (
             <UnderlineNav.Item
               key={tab.href}
+              as={NextLink}
               href={tab.href}
               aria-current={isActive(pathname, tab.href) ? 'page' : undefined}
               counter={tab.count}
@@ -137,7 +171,7 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
           <Link href="https://github.com/dev4aibots/mcp-tool-registry" className="t-code" style={{ fontSize: '12px' }}>
             mcp-tool-registry
           </Link>
-          <Link href="/console" style={{ fontSize: '12px' }}>
+          <Link as={NextLink} href="/console" style={{ fontSize: '12px' }}>
             JSON-RPC console
           </Link>
           <Text className="t-caption-muted">

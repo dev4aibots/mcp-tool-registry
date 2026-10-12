@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
+import NextLink from 'next/link';
 import {
   AvatarStack,
   Banner,
@@ -173,7 +174,12 @@ export default function IncidentDetailPage() {
             </Timeline>
 
             <div className="mt-4">
-              <Link href="/incidents">← Back to all incidents</Link>
+              {/* NextLink (SPA): same JS realm, so the shared session store keeps
+                  the ack — the list re-fetches on mount and shows Acknowledged.
+                  A full browser reload still resets to pristine fixtures. */}
+              <Link as={NextLink} href="/incidents">
+                ← Back to all incidents
+              </Link>
             </div>
           </PageLayout.Content>
 

@@ -2,6 +2,7 @@
 
 import { Suspense, useEffect, useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import NextLink from 'next/link';
 import {
   ActionList,
   ActionMenu,
@@ -77,7 +78,9 @@ function Dashboard() {
         rowHeader: true,
         sortBy: true,
         renderCell: (row) => (
-          <Link href={`/incidents/${row.id}`} className="t-body-semibold">
+          // NextLink (SPA): keeps the module-level session store alive across
+          // navigation, so an ack made on the detail page is visible here.
+          <Link as={NextLink} href={`/incidents/${row.id}`} className="t-body-semibold">
             {row.id}
           </Link>
         ),

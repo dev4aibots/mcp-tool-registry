@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import NextLink from 'next/link';
 import { Button, IconButton, Label, Link, Spinner, Stack, Text } from '@primer/react';
 import { PageHeader, DataTable, createColumnHelper, Blankslate, Dialog } from '@primer/react/experimental';
 import { CodeIcon, CopyIcon, ToolsIcon } from '@primer/octicons-react';
@@ -128,7 +129,7 @@ export default function ToolRegistryPage() {
           server exactly as the stdio implementation returns them.
         </PageHeader.Description>
         <PageHeader.Actions>
-          <Button as="a" href="/console">
+          <Button as={NextLink} href="/console">
             Open console
           </Button>
         </PageHeader.Actions>
