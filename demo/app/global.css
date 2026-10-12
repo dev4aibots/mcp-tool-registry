@@ -1,0 +1,108 @@
+@import '@primer/primitives/dist/css/primitives.css';
+@import '@primer/primitives/dist/css/functional/themes/light.css';
+@import '@primer/primitives/dist/css/functional/themes/dark.css';
+
+/* Primitives @import must stay first; no Tailwind, no custom frameworks. */
+
+body {
+  color: var(--fgColor-default);
+  background-color: var(--bgColor-default);
+}
+
+/* Console JSON token colors — semantic tokens only, per DESIGN.md */
+.json-key { color: var(--fgColor-accent); }
+.json-string { color: var(--fgColor-success); }
+.json-number { color: var(--fgColor-attention); }
+.json-bool { color: var(--fgColor-attention); }
+.json-null { color: var(--fgColor-muted); }
+.json-punct { color: var(--fgColor-muted); }
+
+/* Demo-trace timeline step reveal: one 150ms step, instant under reduced motion */
+.trace-step { animation: trace-in var(--motion-duration-short, 150ms) var(--motion-easing-enter, ease-out); }
+@keyframes trace-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .trace-step { animation: none; }
+}
+
+/* Hand-built interactive bits (console editor, trace toggles) */
+.code-editor {
+  font: var(--text-codeBlock-shorthand-medium);
+  font-family: var(--fontStack-monospace);
+  color: var(--fgColor-default);
+  background-color: var(--bgColor-default);
+  border: 1px solid var(--borderColor-default);
+  border-radius: var(--borderRadius-medium);
+  padding: var(--space-md);
+  width: 100%;
+  resize: vertical;
+}
+.code-editor:hover { border-color: var(--borderColor-emphasis); }
+.code-editor:focus-visible {
+  outline: var(--focus-outline);
+  outline-offset: var(--outline-focus-offset);
+  border-color: var(--fgColor-accent);
+}
+
+.code-panel {
+  font: var(--text-codeBlock-shorthand-medium);
+  font-family: var(--fontStack-monospace);
+  background-color: var(--bgColor-inset);
+  border: 1px solid var(--borderColor-default);
+  border-radius: var(--borderRadius-medium);
+  padding: var(--space-md);
+  overflow-x: auto;
+  white-space: pre;
+  margin: 0;
+}
+
+/* Typography helpers — shorthand tokens only, no bare font-size */
+.t-code { font: var(--text-codeInline-shorthand-medium); }
+.t-caption-muted { font: var(--text-caption-shorthand-medium); color: var(--fgColor-muted); }
+.t-body-muted { font: var(--text-body-shorthand-medium); color: var(--fgColor-muted); }
+.t-body-semibold { font: var(--text-body-shorthand-medium); font-weight: 600; }
+
+/* Spacing helpers — token scale only */
+.mt-1 { margin-top: var(--space-xs); }
+.mt-2 { margin-top: var(--space-sm); }
+.mt-3 { margin-top: var(--space-md); }
+.mt-4 { margin-top: var(--space-lg); }
+.mb-1 { margin-bottom: var(--space-xs); }
+.mb-2 { margin-bottom: var(--space-sm); }
+.mb-3 { margin-bottom: var(--space-md); }
+.ml-1 { margin-left: var(--space-xs); }
+.mr-0 { margin-right: 0; }
+
+/* Display helpers */
+.block { display: block; }
+.flex { display: flex; }
+.w-full { width: 100%; }
+
+/* Layout helpers — token-based, for the generic containers primer/react v38
+   no longer ships (Box was removed). Primer components are untouched. */
+.panel {
+  border: 1px solid var(--borderColor-default);
+  border-radius: var(--borderRadius-medium);
+  background-color: var(--bgColor-default);
+  padding: var(--space-md);
+}
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--stack-gap-normal);
+  flex-wrap: wrap;
+}
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--stack-gap-normal);
+}
+
+/* Responsive: console panes stack below 768px via SplitPageLayout default;
+   section heads step down one size on small screens (DESIGN.md SHOULD) */
+@media (max-width: 768px) {
+  .section-heading { font: var(--text-title-shorthand-small); }
+}
+.section-heading { font: var(--text-title-shorthand-medium); }
