@@ -2,9 +2,9 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import NextLink from 'next/link';
-import { Button, IconButton, Label, Link, Spinner, Stack, Text } from '@primer/react';
+import { Button, CounterLabel, IconButton, Label, Link, Spinner, Stack, Text } from '@primer/react';
 import { PageHeader, DataTable, createColumnHelper, Blankslate, Dialog } from '@primer/react/experimental';
-import { CodeIcon, CopyIcon, ToolsIcon } from '@primer/octicons-react';
+import { CodeIcon, CopyIcon, ToolsIcon, PaperAirplaneIcon } from '@primer/octicons-react';
 import { buildRequest, callLocal } from '@/lib/rpc';
 import type { ToolDescriptor } from '@/lib/mcp/types.js';
 import { JsonView } from '@/components/JsonView';
@@ -19,6 +19,13 @@ type ToolRow = {
 };
 
 const columnHelper = createColumnHelper<ToolRow>();
+
+// Console preset index that calls this tool, for the "Try in console" link.
+const CONSOLE_PRESET: Record<string, number> = {
+  incidents_list: 2,
+  incidents_get: 3,
+  incidents_ack: 4,
+};
 
 export default function ToolRegistryPage() {
   const [tools, setTools] = useState<ToolDescriptor[] | null>(null);
@@ -51,6 +58,9 @@ export default function ToolRegistryPage() {
       })),
     [tools],
   );
+
+  const readOnlyCount = rows.filter((r) => !r.destructive).length;
+  const writeCount = rows.filter((r) => r.destructive).length;
 
   const columns = useMemo(
     () => [
@@ -124,9 +134,9 @@ export default function ToolRegistryPage() {
           <PageHeader.Title>Tool registry</PageHeader.Title>
         </PageHeader.TitleArea>
         <PageHeader.Description>
-          The three incident-management tools served by <Text as="code" className="t-code">com.example/internal-incidents</Text>{' '}
-          — listed live via the real <Text as="code" className="t-code">tools/list</Text> handler, sorted by the
-          server exactly as the stdio implementation returns them.
+          Every tool your AI assistant can plug into, in one catalog. This registry lists the
+          plug-in tools one server offers. Read what each tool accepts, then try it for real in
+          the console.
         </PageHeader.Description>
         <PageHeader.Actions>
           <Button as={NextLink} href="/console">
@@ -134,6 +144,39 @@ export default function ToolRegistryPage() {
           </Button>
         </PageHeader.Actions>
       </PageHeader>
+
+      {/* README-style intro: what this server is and how to use the catalog */}
+      <div className="panel mt-3 mb-3">
+        <Text as="h2" className="display-accent mb-2" style={{ fontSize: '20px', fontWeight: 600 }}>
+          About this registry
+        </Text>
+        <Text className="t-body-muted block mb-2">
+          An MCP server is a plug-in pack: it hands an AI assistant extra tools it can call. This
+          demo is one such server, <Text as="code" className="t-code">com.example/internal-incidents</Text>,
+          offering three tools that manage an incident log. The list below comes from a live{' '}
+          <Text as="code" className="t-code">tools/list</Text> call against the real protocol code,
+          not a fixture.
+        </Text>
+        <Stack direction="horizontal" gap="normal" wrap="wrap" align="center">
+          <Text className="t-body-semibold">Try it:</Text>
+          <Text className="t-body-muted">1. Scan the table.</Text>
+          <Text className="t-body-muted">2. Open a tool to read its input schema.</Text>
+          <Text className="t-body-muted">3. Send a real call from the console.</Text>
+        </Stack>
+        {tools !== null && (
+          <Stack direction="horizontal" gap="normal" wrap="wrap" align="center" className="mt-2">
+            <Text className="t-caption-muted">
+              <CounterLabel>{tools.length}</CounterLabel> tools
+            </Text>
+            <Text className="t-caption-muted">
+              <CounterLabel>{readOnlyCount}</CounterLabel> read-only
+            </Text>
+            <Text className="t-caption-muted">
+              <CounterLabel>{writeCount}</CounterLabel> write op
+            </Text>
+          </Stack>
+        )}
+      </div>
 
       <div className="mt-3">
         {rawError !== null ? (
@@ -154,13 +197,23 @@ export default function ToolRegistryPage() {
       </div>
 
       {selected !== null && (
-        <Dialog title={`Input schema — ${selected.name}`} onClose={() => setSelected(null)} width="large">
+        <Dialog title={`Input schema: ${selected.name}`} onClose={() => setSelected(null)} width="large">
           <Stack direction="vertical" gap="normal">
             <Text className="t-body-muted">{selected.description}</Text>
+            <Text as="h2" className="section-heading">
+              Input schema
+            </Text>
             <JsonView json={JSON.stringify(selected.inputSchema, null, 2)} />
-            <Stack direction="horizontal" gap="normal">
+            <Stack direction="horizontal" gap="normal" wrap="wrap">
               <Button leadingVisual={CopyIcon} onClick={copySchema}>
                 {copied ? 'Copied' : 'Copy schema'}
+              </Button>
+              <Button
+                as={NextLink}
+                href={`/console?preset=${CONSOLE_PRESET[selected.name] ?? 2}`}
+                leadingVisual={PaperAirplaneIcon}
+              >
+                Try {selected.name} in the console
               </Button>
               <Button variant="invisible" onClick={() => setSelected(null)}>
                 Close

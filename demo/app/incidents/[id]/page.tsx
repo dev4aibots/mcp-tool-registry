@@ -61,7 +61,7 @@ export default function IncidentDetailPage() {
 
   const acknowledge = () => {
     setAcking(true);
-    // Real incidents_ack — write op against the session store
+    // Real incidents_ack: a write op against the session store
     callLocal(buildRequest(2, 'tools/call', { name: 'incidents_ack', arguments: { id } }));
     load();
     setAcking(false);
@@ -72,9 +72,9 @@ export default function IncidentDetailPage() {
   return (
     <div>
       <Banner
-        title="Session-scoped ack state"
+        title="How acknowledgements are stored"
         variant="info"
-        description="Acknowledgements run against the session context (the same single-context-per-session semantics as the original stdio server). They persist across in-app navigation, but a full page reload resets the in-browser store to the pristine fixture. The console's HTTP path uses a separate server-side session."
+        description="Acknowledging writes to this tab's session only. It survives moving between pages here, but a full page reload resets the log to its original three incidents. The console's HTTP option keeps a separate session on the server."
         className="mb-3"
       />
 
@@ -121,7 +121,7 @@ export default function IncidentDetailPage() {
           <PageLayout.Content>
             {justAcked && (
               <Flash variant="success" className="mb-3">
-                Incident {incident.id} acknowledged — the state change below comes from a fresh{' '}
+                Incident {incident.id} acknowledged. The state change below comes from a fresh{' '}
                 <Text as="code" className="t-code">incidents_get</Text> after the write.
               </Flash>
             )}
@@ -141,8 +141,8 @@ export default function IncidentDetailPage() {
                 </Timeline.Badge>
                 <Timeline.Body>
                   <Text>
-                    <strong>Opened</strong> — severity {incident.severity}, reported to the incident
-                    store.
+                    <strong>Opened.</strong> Reported to the incident store with severity{' '}
+                    {incident.severity}.
                   </Text>
                 </Timeline.Body>
               </Timeline.Item>
@@ -153,9 +153,9 @@ export default function IncidentDetailPage() {
                   </Timeline.Badge>
                   <Timeline.Body>
                     <Text>
-                      <strong>Acknowledged</strong> — via{' '}
-                      <Text as="code" className="t-code">incidents_ack</Text> (write op, session store
-                      mutated).
+                      <strong>Acknowledged</strong> with{' '}
+                      <Text as="code" className="t-code">incidents_ack</Text>. The session store was
+                      updated.
                     </Text>
                   </Timeline.Body>
                 </Timeline.Item>
@@ -166,7 +166,7 @@ export default function IncidentDetailPage() {
                   </Timeline.Badge>
                   <Timeline.Body>
                     <Text className="t-body-muted">
-                      Awaiting acknowledgement — no ack recorded for this incident yet.
+                      Awaiting acknowledgement. Nothing recorded for this incident yet.
                     </Text>
                   </Timeline.Body>
                 </Timeline.Item>
@@ -175,7 +175,7 @@ export default function IncidentDetailPage() {
 
             <div className="mt-4">
               {/* NextLink (SPA): same JS realm, so the shared session store keeps
-                  the ack — the list re-fetches on mount and shows Acknowledged.
+                  the ack. The list re-fetches on mount and shows Acknowledged.
                   A full browser reload still resets to pristine fixtures. */}
               <Link as={NextLink} href="/incidents">
                 ← Back to all incidents
@@ -243,8 +243,8 @@ export default function IncidentDetailPage() {
           cancelButtonContent="Cancel"
         >
           <Text>
-            This calls <Text as="code" className="t-code">incidents_ack</Text> against the session store —
-            the incident will flip to Acknowledged across this demo.
+            This runs <Text as="code" className="t-code">incidents_ack</Text> in this tab's
+            session. The incident will show as Acknowledged everywhere in this demo.
           </Text>
         </ConfirmationDialog>
       )}

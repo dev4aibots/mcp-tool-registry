@@ -1,7 +1,7 @@
-# PROTOCOL_PARITY.md — mcp-tool-registry port
+# PROTOCOL_PARITY.md: mcp-tool-registry port
 
 Source: `dev4aibots/mcp-tool-registry` (commit f445f4f, read-only via github CLI).
-Target: `~/workspace/demos/mcp-tool-registry-demo/lib/mcp/` — framework-free
+Target: `~/workspace/demos/mcp-tool-registry-demo/lib/mcp/`: framework-free
 TypeScript, importable from a browser/Next.js client with zero config.
 
 ## What was ported (behavior byte-for-byte)
@@ -11,7 +11,7 @@ TypeScript, importable from a browser/Next.js client with zero config.
 | `types.ts` | `src/types.ts` (sha d0f0cee) | Verbatim: JsonRpc envelopes, JsonSchema, ToolDescriptor, Incident, ToolExecutor |
 | `protocol.ts` | `src/protocol.ts` (sha 4b514ae) | Verbatim: constants, `RpcProblem`, `isRecord`, hand-rolled `validateSchema` (object/enum/string/additionalProperties), `requestMeta`, `makeRequest`, `complete`, `validateRequest`, all three method handlers, `dispatch`, `parseRpc` |
 | `tools.ts` | `src/tools.ts` (sha c930226) | Verbatim: `makeIncidents()` fixture data (INC-101 p0 "checkout 500s" acked:false, INC-102 p2 "slow dashboard" acked:true, INC-103 p1 "rate-limit storm" acked:false), the 3 `TOOL_DESCRIPTORS` with exact JSON schemas (strict: `additionalProperties: false`, enum `["p0","p1","p2"]`, required `["id"]`), and all 3 executors (`execList`/`execGet`/`execAck` incl. mutating ack and `throw new Error("not found: <id>")`) |
-| `index.ts` | `src/index.ts` (sha ddf5f83) | `demoFixture()` ported verbatim — the same 8 `makeRequest(...)` calls (same ids, same methods, same args, same `"2027-01-01"` future version on step 8). `main()`'s stdout printing and `--serve` flag were not ported (console/demo-runner concerns, see below) |
+| `index.ts` | `src/index.ts` (sha ddf5f83) | `demoFixture()` ported verbatim: the same 8 `makeRequest(...)` calls (same ids, same methods, same args, same `"2027-01-01"` future version on step 8). `main()`'s stdout printing and `--serve` flag were not ported (console/demo-runner concerns, see below) |
 
 Semantics preserved: `server/discover` → `supportedVersions: ["2026-07-28"]`,
 `capabilities: {tools:{listChanged:false}}`, ttlMs 3_600_000, cacheScope "public";
@@ -24,32 +24,32 @@ protocol version (with `{supported, requested}` data), -32603 internal.
 
 ## What was REPLACED (only the stdio transport)
 
-`src/transport.ts` (sha 93f8534) used `node:readline` + stdin/stdout — not
+`src/transport.ts` (sha 93f8534) used `node:readline` + stdin/stdout: not
 available in a browser. Replaced with:
 
-- `handleLine(context, line): string | null` — `processLine`'s logic preserved
+- `handleLine(context, line): string | null`: `processLine`'s logic preserved
   exactly (trim, `parseRpc`, error envelopes: `-32700 → "Parse error"`,
   `-32600 → "Invalid Request"`, `id: null` + `data: parsed.err`;
   `dispatch` result stringified; `null` when no response).
-- `dispatchJsonRpc(requestJson: string): string` — takes a raw JSON-RPC request
+- `dispatchJsonRpc(requestJson: string): string`: takes a raw JSON-RPC request
   string, returns the verbatim JSON-RPC response string through the same
   parseRpc/dispatch path. Runs on a session-scoped singleton context
   (`getSessionContext()` / `resetSessionContext()`), mirroring `serveStdio`,
-  which created ONE context for the whole session — so an `incidents_ack`
+  which created ONE context for the whole session: so an `incidents_ack`
   persists and is visible on a later `incidents_get` (steps 5→6 of the fixture).
-- Blank lines and JSON-RPC notifications (no `id`) return `""` — matching the
+- Blank lines and JSON-RPC notifications (no `id`) return `""`: matching the
   original, which wrote nothing for them.
 
-`replayFixture` was not ported — tests drive `dispatchJsonRpc` directly, which
+`replayFixture` was not ported: tests drive `dispatchJsonRpc` directly, which
 is the stronger check (string in/out, exact wire format).
 
 ## Honest deviations from README claims (ignored per brief)
 
 - README claims Hono / Vercel-Edge / JWT-auth / benchmarks: none of these
-  exist in `src/` — they were NOT ported (there is nothing to port).
+  exist in `src/`: they were NOT ported (there is nothing to port).
 - `.env.example` keys are vestigial: no code in `src/` reads env; the port
   needs zero config, zero credentials.
-- `package.json` lists `zod` as a dependency, but `src/` never imports it —
+- `package.json` lists `zod` as a dependency, but `src/` never imports it: 
   validation is the hand-rolled `validateSchema` in `protocol.ts`. The port
   therefore does NOT depend on zod (same behavior, no extra dependency).
 

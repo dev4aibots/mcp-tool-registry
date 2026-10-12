@@ -1,6 +1,7 @@
 'use client';
 
-import { useMemo, useRef, useState } from 'react';
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import {
   Banner,
   Button,
@@ -33,17 +34,17 @@ const PRESETS: Array<{ label: string; method: string; params: Record<string, unk
   { label: 'server/discover', method: 'server/discover', params: {} },
   { label: 'tools/list', method: 'tools/list', params: {} },
   {
-    label: 'tools/call → incidents_list',
+    label: 'tools/call: incidents_list',
     method: 'tools/call',
     params: { name: 'incidents_list', arguments: { severity: 'p0' } },
   },
   {
-    label: 'tools/call → incidents_get',
+    label: 'tools/call: incidents_get',
     method: 'tools/call',
     params: { name: 'incidents_get', arguments: { id: 'INC-101' } },
   },
   {
-    label: 'tools/call → incidents_ack',
+    label: 'tools/call: incidents_ack',
     method: 'tools/call',
     params: { name: 'incidents_ack', arguments: { id: 'INC-101' } },
   },
@@ -66,7 +67,8 @@ type TraceStep = {
   call: RpcCall;
 };
 
-export default function ConsolePage() {
+function Console() {
+  const searchParams = useSearchParams();
   const [presetIdx, setPresetIdx] = useState(2);
   const [editorText, setEditorText] = useState(() =>
     pretty(buildRequest(1, PRESETS[2].method, PRESETS[2].params)),
@@ -80,18 +82,31 @@ export default function ConsolePage() {
   const requestId = useRef(100);
 
   const applyPreset = (idx: number) => {
+    if (idx < 0 || idx >= PRESETS.length) return;
     setPresetIdx(idx);
     const preset = PRESETS[idx];
     setEditorText(pretty(buildRequest(requestId.current++, preset.method, preset.params)));
     setEditorError(null);
   };
 
+  // Deep link from a tool's "Try in the console" button: /console?preset=3
+  // pre-loads that preset's request into the editor.
+  useEffect(() => {
+    const raw = searchParams.get('preset');
+    if (raw !== null) {
+      const idx = Number(raw);
+      if (Number.isInteger(idx)) applyPreset(idx);
+    }
+    // Run once on mount; later param changes should not clobber the editor.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const send = async () => {
     let parsed: unknown;
     try {
       parsed = JSON.parse(editorText);
     } catch {
-      setEditorError('Request is not valid JSON — fix it before sending.');
+      setEditorError('Request is not valid JSON. Fix it before sending.');
       return;
     }
     setEditorError(null);
@@ -108,7 +123,7 @@ export default function ConsolePage() {
   };
 
   const runDemoTrace = () => {
-    // The verbatim 8-step demoFixture — the same parity oracle the tests run,
+    // The verbatim 8-step demoFixture (the same parity oracle the tests run),
     // executed step by step through dispatchJsonRpc.
     setTraceRunning(true);
     setLastCall(null);
@@ -145,9 +160,9 @@ export default function ConsolePage() {
           <PageHeader.Title>JSON-RPC console</PageHeader.Title>
         </PageHeader.TitleArea>
         <PageHeader.Description>
-          Compose raw JSON-RPC requests and dispatch them against the real protocol core — the exact{' '}
-          <Text as="code" className="t-code">dispatchJsonRpc</Text> path the stdio server used. Request and
-          response are shown verbatim, nothing is prettified away.
+          Talk to the registry in its own language. Pick a preset or type a raw request, send
+          it, and read exactly what the server answers. The same request handler runs here and
+          in the original server, so nothing is faked.
         </PageHeader.Description>
       </PageHeader>
 
@@ -173,8 +188,8 @@ export default function ConsolePage() {
                   ))}
                 </Select>
                 {/* Native selects don't fire onChange when re-selecting the
-                    already-active option — this refills the editor from the
-                    current preset explicitly. */}
+                    already-active option. This button refills the editor from
+                    the current preset explicitly. */}
                 <Button
                   variant="invisible"
                   size="small"
@@ -203,8 +218,8 @@ export default function ConsolePage() {
                 <FormControl.Validation variant="error">{editorError}</FormControl.Validation>
               )}
               <FormControl.Caption>
-                The <Text as="code" className="t-code">_meta</Text> carries the protocol version the server
-                validates — change it to see -32022.
+                The <Text as="code" className="t-code">_meta</Text> field carries the protocol
+                version the server checks. Change it to a future version to see error -32022.
               </FormControl.Caption>
             </FormControl>
 
@@ -228,8 +243,8 @@ export default function ConsolePage() {
               </SegmentedControl>
               <Text className="t-caption-muted block mt-1">
                 {transport === 'browser'
-                  ? 'In-process dispatchJsonRpc — browser session store.'
-                  : 'POST to /api/rpc — same code path, server-side session store.'}
+                  ? 'Runs the request inside this tab, in this tab’s session.'
+                  : 'POSTs to /api/rpc, which runs the same code in a session on the server.'}
               </Text>
             </div>
 
@@ -252,7 +267,7 @@ export default function ConsolePage() {
           {trace !== null ? (
             <div>
               <Text as="h2" className="section-heading mb-2">
-                Demo trace — 8 steps
+                Demo trace: 8 steps
               </Text>
               <Timeline>
                 {trace.map((step) => {
@@ -263,7 +278,7 @@ export default function ConsolePage() {
                       <Timeline.Body>
                         <div className="row mb-2">
                           <Text className="t-body-semibold">
-                            Step {step.index + 1} — {TRACE_STEP_TITLES[step.index]}
+                            Step {step.index + 1}: {TRACE_STEP_TITLES[step.index]}
                           </Text>
                           {failed ? (
                             <Label variant="danger">
@@ -302,7 +317,7 @@ export default function ConsolePage() {
               </Blankslate.Visual>
               <Blankslate.Heading>No request sent yet</Blankslate.Heading>
               <Blankslate.Description>
-                Pick a preset, edit the raw JSON, and send — or run the 8-step demo trace.
+                Pick a preset, edit the raw JSON, then send. Or run the 8-step demo trace.
               </Blankslate.Description>
               <Blankslate.PrimaryAction onClick={send}>Send request</Blankslate.PrimaryAction>
             </Blankslate>
@@ -339,9 +354,17 @@ export default function ConsolePage() {
       <Banner
         title="Same code path, honest labels"
         variant="info"
-        description="Browser transport calls dispatchJsonRpc directly in this tab (module-scoped session). HTTP transport POSTs the identical raw string to /api/rpc, which calls the same dispatchJsonRpc on the server's session context — including its own ack state. Neither path invents data."
+        description="Browser transport runs dispatchJsonRpc directly in this tab (this tab’s session). HTTP transport POSTs the identical raw string to /api/rpc, which calls the same dispatchJsonRpc in a session on the server, including its own acknowledgement state. Neither path invents data."
         className="mt-3"
       />
     </div>
+  );
+}
+
+export default function ConsolePage() {
+  return (
+    <Suspense>
+      <Console />
+    </Suspense>
   );
 }

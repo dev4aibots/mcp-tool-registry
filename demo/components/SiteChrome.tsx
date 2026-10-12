@@ -175,7 +175,7 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
             JSON-RPC console
           </Link>
           <Text className="t-caption-muted">
-            Every view dispatches against the real ported protocol core — no mocks.
+            Every view talks to the real protocol code. Nothing here is faked.
           </Text>
         </Stack>
       </footer>

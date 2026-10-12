@@ -1,4 +1,6 @@
 import './global.css';
+import '@fontsource-variable/mona-sans';
+import '@fontsource-variable/hubot-sans';
 import { cookies } from 'next/headers';
 import { BaseStyles, ThemeProvider } from '@primer/react';
 import { SiteChrome } from '@/components/SiteChrome';
@@ -6,7 +8,7 @@ import { SiteChrome } from '@/components/SiteChrome';
 export const metadata = {
   title: 'mcp-tool-registry demo — dev4aibots',
   description:
-    'Live browser demo of the MCP tool registry protocol core: real JSON-RPC dispatch, incidents tools, and error paths.',
+    'Every tool an AI assistant can plug into, in one catalog: browse the tools, watch incidents get acknowledged, and send raw requests to the real protocol core.',
 };
 
 type ColorMode = 'light' | 'dark' | 'auto';

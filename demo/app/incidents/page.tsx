@@ -7,6 +7,7 @@ import {
   ActionList,
   ActionMenu,
   Button,
+  CounterLabel,
   Label,
   LabelGroup,
   Link,
@@ -125,6 +126,8 @@ function Dashboard() {
   };
 
   const hasFilters = severityFilter.size > 0 || ackFilter !== 'all' || query.trim() !== '';
+  const openCount = (incidents ?? []).filter((i) => !i.acked).length;
+  const ackedCount = (incidents ?? []).filter((i) => i.acked).length;
   const clearAll = () => {
     setSeverityFilter(new Set());
     setAckFilter('all');
@@ -139,9 +142,18 @@ function Dashboard() {
           <PageHeader.Title>Incidents</PageHeader.Title>
         </PageHeader.TitleArea>
         <PageHeader.Description>
-          Live results of <Text as="code" className="t-code">incidents_list</Text> — the same executor the
-          stdio server runs. Acknowledging an incident flips its status here and on the detail page.
+          A live incident log, served by the registry’s own tools. Open any row for the full
+          record, or acknowledge it from the detail page. Statuses update everywhere the moment
+          you acknowledge.
         </PageHeader.Description>
+        <PageHeader.Actions>
+          <Text className="t-caption-muted">
+            <CounterLabel>{openCount}</CounterLabel> open
+          </Text>
+          <Text className="t-caption-muted">
+            <CounterLabel>{ackedCount}</CounterLabel> acknowledged
+          </Text>
+        </PageHeader.Actions>
       </PageHeader>
 
       {/* Filter bar — sticky, per DESIGN.md z-index + shadow tokens */}
@@ -250,10 +262,9 @@ function Dashboard() {
             <Blankslate.Visual>
               <CheckIcon size="medium" />
             </Blankslate.Visual>
-            <Blankslate.Heading>No incidents match</Blankslate.Heading>
+            <Blankslate.Heading>No incidents match these filters</Blankslate.Heading>
             <Blankslate.Description>
-              Nothing matches the current filters. Clearing them shows all incidents from the live
-              store.
+              Nothing in the live log matches. Clear the filters to see every incident.
             </Blankslate.Description>
             <Blankslate.PrimaryAction onClick={clearAll}>Clear filters</Blankslate.PrimaryAction>
           </Blankslate>

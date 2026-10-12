@@ -12,40 +12,45 @@ type ErrorCase = {
   title: string;
   description: string;
   expected: string;
+  buttonLabel: string;
   build: (id: number) => string;
 };
 
 const CASES: ErrorCase[] = [
   {
     key: 'unknown-tool',
-    title: 'Unknown tool',
+    title: 'Call an unknown tool',
     description:
-      'tools/call with a name the registry does not serve. The real handler throws -32602 "Unknown tool: no_such_tool".',
+      'tools/call asks for no_such_tool, a name this registry never registered. The real handler rejects it with error -32602.',
     expected: '-32602 · Invalid params',
+    buttonLabel: 'Fire unknown tool',
     build: (id) => buildRequest(id, 'tools/call', { name: 'no_such_tool', arguments: {} }),
   },
   {
     key: 'bad-version',
-    title: 'Unsupported protocol version',
+    title: 'Send a future protocol version',
     description:
-      'The _meta protocolVersion is set to "2027-01-01", a future version the server does not support. Negotiation data is echoed back.',
+      'The _meta stamp claims version 2027-01-01, which this server does not support. Negotiation fails with -32022 and the server echoes back what it does support.',
     expected: '-32022 · Unsupported protocol version',
+    buttonLabel: 'Fire future version',
     build: (id) => buildRequest(id, 'tools/list', {}, '2027-01-01'),
   },
   {
     key: 'schema-invalid',
-    title: 'Schema-invalid arguments',
+    title: 'Skip a required argument',
     description:
-      'incidents_get requires "id" — the hand-rolled schema validator rejects the call. Per the real protocol this is a tool result with isError: true, not a JSON-RPC error.',
+      'incidents_get needs an id argument. The schema check rejects the call before anything runs, and the protocol returns it as a tool result with isError: true, not as a JSON-RPC error.',
     expected: 'result · isError: true',
+    buttonLabel: 'Fire missing argument',
     build: (id) => buildRequest(id, 'tools/call', { name: 'incidents_get', arguments: {} }),
   },
   {
     key: 'unknown-incident',
-    title: 'Unknown incident id',
+    title: 'Ask for a missing incident',
     description:
-      'The incidents_get executor throws for an id the store never had. The protocol catches executor throws and returns an isError tool result.',
+      'incidents_get looks up INC-404, an id the log never had. The lookup throws, and the protocol reports it honestly as a tool result with isError: true.',
     expected: 'result · isError: true',
+    buttonLabel: 'Fire missing incident',
     build: (id) => buildRequest(id, 'tools/call', { name: 'incidents_get', arguments: { id: 'INC-404' } }),
   },
 ];
@@ -56,8 +61,8 @@ export default function ErrorShowcasePage() {
 
   const fire = (errorCase: ErrorCase) => {
     const id = nextId.current++;
-    // Each button dispatches through the real server core — the envelopes
-    // below are its verbatim output, not fixtures.
+    // Each button dispatches through the real server core. The envelopes below
+    // are its verbatim output, not fixtures.
     const call = callLocal(errorCase.build(id));
     setResults((prev) => ({ ...prev, [errorCase.key]: call }));
   };
@@ -69,16 +74,16 @@ export default function ErrorShowcasePage() {
           <PageHeader.Title>Error paths</PageHeader.Title>
         </PageHeader.TitleArea>
         <PageHeader.Description>
-          One click per failure mode. Every envelope shown is produced live by{' '}
-          <Text as="code" className="t-code">dispatchJsonRpc</Text> — the same parse/validate/dispatch path
-          the stdio server runs, with the real error codes (-32602, -32022) and real isError tool results.
+          One click per failure mode. Every answer below is produced live by the real request
+          handler, the same code path the original server runs. The error codes are real:
+          -32602, -32022, and honest isError results.
         </PageHeader.Description>
       </PageHeader>
 
       <Banner
-        title="Exact envelopes"
+        title="Real answers, not illustrations"
         variant="warning"
-        description="These are not illustrations. The request on the left is sent to the live core; the response on the right is what it returns, byte for byte."
+        description="The request on the left is sent to the live core; the response on the right is what it returns, byte for byte."
         className="mt-3"
       />
 
@@ -103,7 +108,7 @@ export default function ErrorShowcasePage() {
               <Text className="t-body-muted">{errorCase.description}</Text>
               <div>
                 <Button leadingVisual={AlertIcon} onClick={() => fire(errorCase)}>
-                  Fire {errorCase.title.toLowerCase()}
+                  {errorCase.buttonLabel}
                 </Button>
               </div>
               {result ? (
@@ -123,7 +128,9 @@ export default function ErrorShowcasePage() {
                 </div>
               ) : (
                 <Blankslate>
-                  <Blankslate.Description>Not fired yet.</Blankslate.Description>
+                  <Blankslate.Description>
+                    Not fired yet. Press the button above to send this broken request.
+                  </Blankslate.Description>
                 </Blankslate>
               )}
             </div>

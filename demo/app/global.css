@@ -4,6 +4,26 @@
 
 /* Primitives @import must stay first; no Tailwind, no custom frameworks. */
 
+/* Design-overhaul type wiring (2026-10-12): Mona Sans for UI, Hubot Sans for
+   display accents — both self-hosted via fontsource (OFL). Primer's stacks name
+   "Mona Sans VF" but the npm packages do not ship the file; the fontsource
+   variable faces register as "Mona Sans Variable" / "Hubot Sans Variable".
+   Overrides re-map the stacks only; every size/leading/tracking number stays a
+   Primer token. --fontStack-sansSerifDisplay is Primer's own display stack
+   ("for headings and titles, semantically distinct"). */
+:root {
+  --fontStack-sansSerif: "Mona Sans Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans Backtick Fix", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  --fontStack-sansSerifDisplay: "Hubot Sans Variable", "Mona Sans Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  --fontStack-system: "Mona Sans Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+/* Display accents: Hubot Sans, Primer's display stack. Applied to README-style
+   headings and section heads — PageHeader keeps its own Primer type. */
+.display-accent {
+  font-family: var(--fontStack-sansSerifDisplay);
+  letter-spacing: -0.02em;
+}
+
 body {
   color: var(--fgColor-default);
   background-color: var(--bgColor-default);
@@ -103,6 +123,7 @@ body {
 /* Responsive: console panes stack below 768px via SplitPageLayout default;
    section heads step down one size on small screens (DESIGN.md SHOULD) */
 @media (max-width: 768px) {
-  .section-heading { font: var(--text-title-shorthand-small); }
+  .section-heading { font: var(--text-title-shorthand-small); font-family: var(--fontStack-sansSerifDisplay); }
 }
-.section-heading { font: var(--text-title-shorthand-medium); }
+/* Section headings: Primer title shorthand, Hubot Sans display voice */
+.section-heading { font: var(--text-title-shorthand-medium); font-family: var(--fontStack-sansSerifDisplay); letter-spacing: -0.01em; }
