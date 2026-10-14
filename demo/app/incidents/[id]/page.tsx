@@ -235,8 +235,10 @@ export default function IncidentDetailPage() {
         <ConfirmationDialog
           title={`Acknowledge ${incident.id}?`}
           onClose={(gesture) => {
-            if (gesture === 'close-button' || gesture === 'escape') setConfirmOpen(false);
-            else acknowledge();
+            // Only the explicit "Acknowledge" confirm button performs the write.
+            // Every other dismissal (Cancel button, X, Escape) just closes.
+            if (gesture === 'confirm') acknowledge();
+            else setConfirmOpen(false);
           }}
           confirmButtonContent="Acknowledge"
           confirmButtonType="primary"
