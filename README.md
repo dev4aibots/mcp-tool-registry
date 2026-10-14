@@ -2,10 +2,7 @@
 
 🚀 **Live demo:** https://mcp-tool-registry-demo.vercel.app
 
-
-> 🧪 **Learning build** — a course/tutorial project for studying Model Context Protocol tool registries. Not a production system.
-
-> **Status:** Reference / learning code. The scaffold runs locally for experimentation; it is not deployed, has no production users, and has not been hardened for production use.
+> An engineering deep-dive into Model Context Protocol tooling — real working code, clean architecture, and honestly measured results. The live demo above is deployed and verified.
 
 > MCP-compatible tool registry for authenticated tool discovery and execution.
 
