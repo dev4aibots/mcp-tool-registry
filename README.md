@@ -1,6 +1,6 @@
 # MCP Tool Registry
 
-🚀 **Live demo:** https://mcp-tool-registry-demo.vercel.app
+**Live demo:** https://mcp-tool-registry-demo.vercel.app/tools
 
 > An engineering deep-dive into Model Context Protocol tooling — real working code, clean architecture, and honestly measured results. The live demo above is deployed and verified.
 
@@ -8,7 +8,7 @@
 
 ![Demo](demo.gif)
 
-[Demo](demo.gif) | [Architecture](docs/architecture.md) | [API Docs](docs/api.md) | [Evaluation](docs/evaluation.md)
+[Demo](demo.gif) | [Architecture](docs/architecture.md) | [Evaluation](docs/evaluation.md)
 
 ## What it does
 Provides a centralized, highly concurrent registry for Model Context Protocol (MCP) tools. It acts as an execution gateway, mapping autonomous agent requests to sandboxed tool executions while enforcing strict JWT-based role permissions.
