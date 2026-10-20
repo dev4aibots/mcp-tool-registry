@@ -126,12 +126,12 @@ export default function IncidentDetailPage() {
               </Flash>
             )}
 
-            <Text as="h2" className="section-heading mb-2">
+            <Text as="h2" className="section-heading du-section-rule mb-2">
               Live record
             </Text>
             <JsonView json={pretty(lastCall ?? '{}')} />
 
-            <Text as="h2" className="section-heading mt-4 mb-2">
+            <Text as="h2" className="section-heading du-section-rule mt-4 mb-2">
               Activity
             </Text>
             <Timeline>
@@ -184,7 +184,7 @@ export default function IncidentDetailPage() {
           </PageLayout.Content>
 
           <PageLayout.Pane>
-            <Text as="h2" className="section-heading mb-2">
+            <Text as="h2" className="section-heading du-section-rule mb-2">
               Details
             </Text>
             <div className="col mb-3">

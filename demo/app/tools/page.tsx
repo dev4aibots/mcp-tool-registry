@@ -200,7 +200,7 @@ export default function ToolRegistryPage() {
         <Dialog title={`Input schema: ${selected.name}`} onClose={() => setSelected(null)} width="large">
           <Stack direction="vertical" gap="normal">
             <Text className="t-body-muted">{selected.description}</Text>
-            <Text as="h2" className="section-heading">
+            <Text as="h2" className="section-heading du-section-rule">
               Input schema
             </Text>
             <JsonView json={JSON.stringify(selected.inputSchema, null, 2)} />

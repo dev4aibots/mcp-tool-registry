@@ -6,7 +6,7 @@ import React from 'react';
 const TOKEN_RE =
   /("(?:\\.|[^"\\])*")(\s*:)?|(-?\b\d+(?:\.\d+)?(?:[eE][+-]?\d+)?\b)|\b(true|false)\b|\b(null)\b|([{}[\],])/g;
 
-export function JsonView({ json, wrap = false }: { json: string; wrap?: boolean }) {
+export function JsonView({ json, wrap = false, beam = false }: { json: string; wrap?: boolean; beam?: boolean }) {
   const nodes: React.ReactNode[] = [];
   let lastIndex = 0;
   let key = 0;
@@ -63,7 +63,7 @@ export function JsonView({ json, wrap = false }: { json: string; wrap?: boolean 
     nodes.push(<span key={key++}>{json.slice(lastIndex)}</span>);
   }
   return (
-    <pre className="code-panel" style={wrap ? { whiteSpace: 'pre-wrap', wordBreak: 'break-word' } : undefined}>
+    <pre className={beam ? "code-panel du-beam-console" : "code-panel"} style={wrap ? { whiteSpace: 'pre-wrap', wordBreak: 'break-word' } : undefined}>
       <code>{nodes}</code>
     </pre>
   );

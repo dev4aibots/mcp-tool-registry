@@ -1,4 +1,5 @@
 import './global.css';
+import './design-overlay.css';
 import '@fontsource-variable/mona-sans';
 import '@fontsource-variable/hubot-sans';
 import { cookies } from 'next/headers';
@@ -30,7 +31,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       data-light-theme="light"
       data-dark-theme="dark"
     >
-      <body>
+      <body className="du-theme-fade">
         {/* Theme attributes live on <html>; contextOnly avoids an extra DOM wrapper */}
         <ThemeProvider colorMode={colorMode} contextOnly>
           <BaseStyles>

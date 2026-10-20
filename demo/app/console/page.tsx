@@ -170,7 +170,7 @@ function Console() {
         <SplitPageLayout.Pane position="start" aria-label="Request composer">
           <Stack direction="vertical" gap="normal">
             <div>
-              <Text as="h2" className="section-heading mb-2">
+              <Text as="h2" className="section-heading du-section-rule mb-2">
                 Request
               </Text>
               <FormControl>
@@ -265,8 +265,8 @@ function Console() {
 
         <SplitPageLayout.Content aria-label="Response">
           {trace !== null ? (
-            <div>
-              <Text as="h2" className="section-heading mb-2">
+            <div className="du-trace-spine">
+              <Text as="h2" className="section-heading du-section-rule mb-2">
                 Demo trace: 8 steps
               </Text>
               <Timeline>
@@ -293,8 +293,8 @@ function Console() {
                           <Details.Summary>Verbatim request / response</Details.Summary>
                           <div className="mt-2">
                             <Stack direction="vertical" gap="normal">
-                              <JsonView json={pretty(step.requestJson)} />
-                              <JsonView json={pretty(step.call.responseJson)} />
+                              <JsonView json={pretty(step.requestJson)} beam={traceRunning} />
+                              <JsonView json={pretty(step.call.responseJson)} beam={traceRunning} />
                             </Stack>
                           </div>
                         </Details>
@@ -335,16 +335,16 @@ function Console() {
                 <Label variant="accent">{transport === 'browser' ? 'browser' : 'http'}</Label>
               </div>
               <div>
-                <Text as="h2" className="section-heading mb-2">
+                <Text as="h2" className="section-heading du-section-rule mb-2">
                   Request
                 </Text>
-                <JsonView json={pretty(lastCall.requestJson)} />
+                <JsonView json={pretty(lastCall.requestJson)} beam={sending} />
               </div>
               <div>
-                <Text as="h2" className="section-heading mb-2">
+                <Text as="h2" className="section-heading du-section-rule mb-2">
                   Response
                 </Text>
-                <JsonView json={pretty(lastCall.responseJson)} />
+                <JsonView json={pretty(lastCall.responseJson)} beam={sending} />
               </div>
             </Stack>
           )}

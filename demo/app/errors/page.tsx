@@ -100,7 +100,7 @@ export default function ErrorShowcasePage() {
           return (
             <div key={errorCase.key} className="panel col">
               <div className="row" style={{ justifyContent: 'space-between' }}>
-                <Text as="h2" className="section-heading">
+                <Text as="h2" className="section-heading du-section-rule">
                   {errorCase.title}
                 </Text>
                 <Label variant="attention">{errorCase.expected}</Label>
