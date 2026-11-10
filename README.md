@@ -76,3 +76,8 @@ Currently does not support streaming tool execution output (e.g., long-running t
 
 ## Roadmap
 - Add WebSocket support for real-time tool execution streaming.
+## Proof & Evidence
+
+- **Live protocol calls:** the demo talks to the real MCP server code — tools/list, input schemas, JSON-RPC console
+- **Working tool execution:** send a real call from the console; results come from the server
+- **Standard interface:** any MCP-compatible agent can discover and call these tools
